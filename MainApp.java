@@ -1,5 +1,4 @@
 import java.awt.EventQueue;
-import java.sql.Date;
 import java.sql.SQLException;
 import javax.swing.JFrame;
 import java.awt.CardLayout;
@@ -12,7 +11,6 @@ import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 import java.awt.Color;
@@ -33,6 +31,7 @@ public class MainApp {
 	private JPanel panelToDo;							// Menu List Page
 	static JTable tableBirthday;
 	static JTextField textFieldSearchDOB;
+	private JTextField textFieldExportBirthDay;
 	
 	// Below Data Field for Church Member Contacts
 	private JPanel panelChurchMemberContacts;
@@ -246,6 +245,7 @@ public class MainApp {
 				panelChurchDonations.setVisible(false);
 				panelEditUpdate.setVisible(false);		
 				textFieldSearchDOB.setText("");
+				textFieldExportBirthDay.setText("");
 				tableBirthday.setModel(new DefaultTableModel());
 			}
 		});
@@ -304,18 +304,18 @@ public class MainApp {
 		buttonSearchDOB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {												// SEARCH DATE OF BIRTH ***************************
 				
-				String birthMonth = textFieldSearchDOB.getText();
-				String dateOB = "%-" + birthMonth + "-%";
+				String birthMonth = textFieldSearchDOB.getText().toUpperCase();
+				String dateOB = birthMonth + "-%";
 				
-				if (dateOB.equals("%--%"))	{
+				if (dateOB.equals("-%"))	{
 					
-					JOptionPane.showMessageDialog(null, "Search Field is Empty ! ! ! Type in the Month (01 - 12)");
+					JOptionPane.showMessageDialog(null, "Search Field is Empty ! ! ! \n Type in the First 3 Letters of the Month [JAN - DEC]");
 				}
 				else	{
 					try {
 						Connect.searchForDateOfBirth(dateOB);
 						if (Connect.checkMonthlyBirthdayCelebration() == true)	{
-							//textFieldSearchDOB.setText("");
+							textFieldSearchDOB.setText("");
 						}
 						else	{
 							JOptionPane.showMessageDialog(null, "No Church Member has Birthday for this Month ! ! !");
@@ -334,9 +334,9 @@ public class MainApp {
 		buttonSearchDOB.setBounds(551, 341, 456, 37);
 		panelToDo.add(buttonSearchDOB);
 		
-		JLabel lblNewLabelSearchDOB = new JLabel("Search by Month Number [01 - 12] to Celebrate Church Members Birthday");
+		JLabel lblNewLabelSearchDOB = new JLabel("Search by First 3 Letters of the Month [JAN - DEC] to View and Celebrate Church Members Birthday");
 		lblNewLabelSearchDOB.setFont(new Font("Verdana", Font.BOLD, 14));
-		lblNewLabelSearchDOB.setBounds(83, 305, 714, 22);
+		lblNewLabelSearchDOB.setBounds(83, 305, 835, 22);
 		panelToDo.add(lblNewLabelSearchDOB);
 		
 		JLabel lblClickOnAny = new JLabel("Click on any of the Buttons Below to Perform a Preferred Task");
@@ -349,23 +349,26 @@ public class MainApp {
 		tableBirthday.setFont(new Font("Verdana", Font.PLAIN, 14));
 				
 		JScrollPane scrollPaneBirthday = new JScrollPane(tableBirthday);
-		scrollPaneBirthday.setBounds(83, 391, 924, 358);
+		scrollPaneBirthday.setBounds(83, 391, 924, 290);
 		panelToDo.add(scrollPaneBirthday);
 		
-		JButton btnExportChurchMembers = new JButton("Export Church Members with Birthday to File");
+		JButton btnExportChurchMembers = new JButton("<<  Export Church Members with Birthday to File");
 		btnExportChurchMembers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				String birthMonth = textFieldSearchDOB.getText();
-				String dateOB = "%-" + birthMonth + "-%";
+				String birthMonth = textFieldExportBirthDay.getText().toUpperCase();
+				String dateOB = birthMonth + "-%";
 				
-				if (dateOB.equals("%--%"))	{
+				if (dateOB.equals("-%"))	{
 					
-					JOptionPane.showMessageDialog(null, "Search Field is Empty ! ! ! Type in the Month (01 - 12)");
+					JOptionPane.showMessageDialog(null, "Search Field is Empty ! ! ! \n Type in the First 3 Letters of the Month (JAN - DEC)");
 				}
 				else	{
 					try {
-						Connect.exportMontlyBDayToFile(dateOB);						
+						Connect.exportMontlyBDayToFile(dateOB);
+						
+						textFieldExportBirthDay.setText("");
+						
 					}	catch (SQLException | IOException ex) {
 							ex.printStackTrace();
 						}
@@ -375,13 +378,13 @@ public class MainApp {
 		});
 		btnExportChurchMembers.setForeground(Color.BLUE);
 		btnExportChurchMembers.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 12));
-		btnExportChurchMembers.setBounds(83, 812, 456, 37);
+		btnExportChurchMembers.setBounds(331, 741, 386, 37);
 		panelToDo.add(btnExportChurchMembers);
 		
-		JLabel lblToExportMembers = new JLabel("To Export Church Members with Birthday for this Month to File Click the Button below");
+		JLabel lblToExportMembers = new JLabel("To Export Church Members with Birthday for this Month to File, Search by First 3 Letters of the Month [JAN - DEC]");
 		lblToExportMembers.setForeground(Color.BLUE);
 		lblToExportMembers.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 13));
-		lblToExportMembers.setBounds(83, 777, 714, 22);
+		lblToExportMembers.setBounds(83, 706, 924, 22);
 		panelToDo.add(lblToExportMembers);
 		
 		JButton btnDeleteExistingFile = new JButton("Delete Existing File Before Export");
@@ -392,7 +395,7 @@ public class MainApp {
 		});
 		btnDeleteExistingFile.setForeground(Color.RED);
 		btnDeleteExistingFile.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 12));
-		btnDeleteExistingFile.setBounds(551, 812, 456, 37);
+		btnDeleteExistingFile.setBounds(729, 741, 278, 37);
 		panelToDo.add(btnDeleteExistingFile);
 		
 		JLabel lblMembersMonthlyBirthday = new JLabel("MEMBERS MONTHLY BIRTHDAY CELEBRATION");
@@ -401,6 +404,12 @@ public class MainApp {
 		lblMembersMonthlyBirthday.setBounds(352, 270, 432, 22);
 		panelToDo.add(lblMembersMonthlyBirthday);
 		
+		textFieldExportBirthDay = new JTextField();
+		textFieldExportBirthDay.setFont(new Font("Verdana", Font.PLAIN, 14));
+		textFieldExportBirthDay.setColumns(10);
+		textFieldExportBirthDay.setBounds(83, 740, 236, 37);
+		panelToDo.add(textFieldExportBirthDay);
+		
 		// CHURCH MEMBER CONTACT PAGE
 		panelChurchMemberContacts = new JPanel();
 		frmChurchMembersAnd.getContentPane().add(panelChurchMemberContacts, "name_118392875297005");
@@ -408,82 +417,80 @@ public class MainApp {
 		
 		textFieldFullName = new JTextField();
 		textFieldFullName.setFont(new Font("Verdana", Font.PLAIN, 14));
-		textFieldFullName.setBounds(572, 672, 464, 39);
+		textFieldFullName.setBounds(602, 612, 434, 39);
 		panelChurchMemberContacts.add(textFieldFullName);
 		textFieldFullName.setColumns(10);
 		
 		textFieldDOB = new JTextField();
 		textFieldDOB.setFont(new Font("Verdana", Font.PLAIN, 14));
-		textFieldDOB.setToolTipText("YYYY-MM-DD");
+		textFieldDOB.setToolTipText("ex May-10");
 		textFieldDOB.setColumns(10);
-		textFieldDOB.setBounds(240, 722, 222, 39);
+		textFieldDOB.setBounds(228, 662, 234, 39);
 		panelChurchMemberContacts.add(textFieldDOB);
 		
 		textFieldContactPhone = new JTextField();
 		textFieldContactPhone.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldContactPhone.setColumns(10);
-		textFieldContactPhone.setBounds(180, 774, 282, 39);
+		textFieldContactPhone.setBounds(180, 714, 282, 39);
 		panelChurchMemberContacts.add(textFieldContactPhone);
 		
 		textFieldContactEmail = new JTextField();
 		textFieldContactEmail.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldContactEmail.setColumns(10);
-		textFieldContactEmail.setBounds(610, 774, 426, 39);
+		textFieldContactEmail.setBounds(610, 714, 426, 39);
 		panelChurchMemberContacts.add(textFieldContactEmail);
 		
-		JLabel lblFullName = new JLabel("Full Name");
+		JLabel lblFullName = new JLabel("Full Name *");
 		lblFullName.setFont(new Font("Verdana", Font.PLAIN, 14));
-		lblFullName.setBounds(480, 672, 80, 39);
+		lblFullName.setBounds(480, 612, 98, 39);
 		panelChurchMemberContacts.add(lblFullName);
 		
-		JLabel lblDateOfBirth = new JLabel("Date of Birth (YYYY-MM-DD)");
+		JLabel lblDateOfBirth = new JLabel("Birth Date (ex: DEC-10) *");
 		lblDateOfBirth.setFont(new Font("Verdana", Font.PLAIN, 14));
-		lblDateOfBirth.setBounds(23, 722, 211, 39);
+		lblDateOfBirth.setBounds(23, 662, 199, 39);
 		panelChurchMemberContacts.add(lblDateOfBirth);
 		
 		JLabel lblContactAddress = new JLabel("Contact Address");
 		lblContactAddress.setFont(new Font("Verdana", Font.PLAIN, 14));
-		lblContactAddress.setBounds(480, 724, 132, 39);
+		lblContactAddress.setBounds(480, 664, 132, 39);
 		panelChurchMemberContacts.add(lblContactAddress);
 		
 		JLabel lblContactPhoneNo = new JLabel("Contact Phone No.");
 		lblContactPhoneNo.setFont(new Font("Verdana", Font.PLAIN, 14));
-		lblContactPhoneNo.setBounds(23, 772, 145, 39);
+		lblContactPhoneNo.setBounds(23, 712, 145, 39);
 		panelChurchMemberContacts.add(lblContactPhoneNo);
 		
 		JLabel lblContactEmail = new JLabel("Contact E-Mail");
 		lblContactEmail.setFont(new Font("Verdana", Font.PLAIN, 14));
-		lblContactEmail.setBounds(480, 772, 118, 39);
+		lblContactEmail.setBounds(480, 712, 118, 39);
 		panelChurchMemberContacts.add(lblContactEmail);
 		
 		JButton btnSave = new JButton("Save to Church Member Contacts");
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				String D_OfBirth = textFieldDOB.getText();
-				if (D_OfBirth.equals(""))	{
-					D_OfBirth = "1000-01-01";										//DEFAULT DATE VALUE IF THE DATA FIELD IS EMPTY
-				}
-				
 				String memID = textFieldMemberID.getText().toUpperCase();
 				String f_Name = textFieldFullName.getText();
-				Date dateOfBirth = java.sql.Date.valueOf(D_OfBirth);
+				String dateOfBirth = textFieldDOB.getText().toUpperCase();
 				String conAdd = textFieldContactAdd.getText();
 				String phone = textFieldContactPhone.getText();
 				String e_mail = textFieldContactEmail.getText();
 				String DB_User = textFieldUserName.getText();
-				String notes = "Church Member";
 				
-				if (memID.equals("") || f_Name.equals(""))	{																							// TO CHECK IF FULL NAME FEILD IS NOT EMPTY
-					JOptionPane.showMessageDialog(null, "Member ID or Full Name Field cannot be Empty ! ! !");
+				
+				if (memID.equals("") || f_Name.equals("") || dateOfBirth.equals(""))	{														// TO CHECK IF FULL NAME FEILD IS NOT EMPTY
+					JOptionPane.showMessageDialog(null, "All Fields Marked * cannot be Empty ! ! !");
 				}
 				else if (memID.length() != 9)	{
 					JOptionPane.showMessageDialog(null, "Memeber ID format is wrong. The Correct Format - CMID-0000");
 				}
+				else if (dateOfBirth.length() != 6)	{
+					JOptionPane.showMessageDialog(null, "Wrong Birth Date format. Correct Sample Format: DEC-20");
+				}
 				else	{
 					try	{
 					
-						boolean cmi = Connect.insertChurchMemberInfo(memID, f_Name, dateOfBirth, conAdd, phone, e_mail, notes, DB_User);		// INSERT INTO DATABASE OF CHURCH MEMBER CONTACT AND RETURN TRUE IF SUCCESSFUL
+						boolean cmi = Connect.insertChurchMemberInfo(memID, f_Name, dateOfBirth, conAdd, phone, e_mail, DB_User);		// INSERT INTO DATABASE OF CHURCH MEMBER CONTACT AND RETURN TRUE IF SUCCESSFUL
 					
 						if (cmi == true)	{		
 						
@@ -504,14 +511,14 @@ public class MainApp {
 						}	
 					
 					}	catch(Exception e)	{
-        			e.printStackTrace();
-        			JOptionPane.showMessageDialog(null, "Sorry Member ID ALREADY Exist, Not Successfully Saved ! ! !");
-					}
+							e.printStackTrace();
+							JOptionPane.showMessageDialog(null, "Sorry Member ID ALREADY Exist, Not Successfully Saved ! ! !");
+						}
 				}
 			}
 		});
 		btnSave.setFont(new Font("Verdana", Font.BOLD, 15));
-		btnSave.setBounds(523, 824, 325, 44);
+		btnSave.setBounds(523, 764, 325, 44);
 		panelChurchMemberContacts.add(btnSave);
 		
 		JButton buttonLogout = new JButton("Logout");										//LOGOUT BUTTON ON CHURCH MEMBER CONTACT PAGE
@@ -578,35 +585,35 @@ public class MainApp {
 			}
 		});
 		btnClear_1.setFont(new Font("Verdana", Font.BOLD, 15));
-		btnClear_1.setBounds(887, 824, 172, 44);
+		btnClear_1.setBounds(887, 764, 172, 44);
 		panelChurchMemberContacts.add(btnClear_1);
 		
 		textFieldContactAdd = new JTextField();
-		textFieldContactAdd.setToolTipText("YYYY-MM-DD");
+		textFieldContactAdd.setToolTipText("");
 		textFieldContactAdd.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldContactAdd.setColumns(10);
-		textFieldContactAdd.setBounds(624, 724, 412, 39);
+		textFieldContactAdd.setBounds(624, 664, 412, 39);
 		panelChurchMemberContacts.add(textFieldContactAdd);
 		
 		JLabel lblContactForm = new JLabel("Form to Save to Church Member Contact");
 		lblContactForm.setFont(new Font("Verdana", Font.BOLD, 16));
-		lblContactForm.setBounds(405, 625, 383, 32);
+		lblContactForm.setBounds(405, 565, 383, 32);
 		panelChurchMemberContacts.add(lblContactForm);
 		
 		textFieldMemberID = new JTextField();
 		textFieldMemberID.setToolTipText("Member ID Format is CMID-0000");
 		textFieldMemberID.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldMemberID.setColumns(10);
-		textFieldMemberID.setBounds(224, 670, 238, 39);
+		textFieldMemberID.setBounds(240, 610, 222, 39);
 		panelChurchMemberContacts.add(textFieldMemberID);
 		
-		JLabel lblMemberid = new JLabel("Member-ID (CMID-0000)");
+		JLabel lblMemberid = new JLabel("Member-ID (CMID-0000) *");
 		lblMemberid.setFont(new Font("Verdana", Font.PLAIN, 14));
-		lblMemberid.setBounds(23, 670, 189, 39);
+		lblMemberid.setBounds(23, 610, 205, 39);
 		panelChurchMemberContacts.add(lblMemberid);
 		
 		JScrollPane scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(23, 169, 1036, 444);
+		scrollPane_2.setBounds(23, 169, 1036, 383);
 		panelChurchMemberContacts.add(scrollPane_2);
 		
 		tableViewMemberContactB4Insert = new JTable();
@@ -649,82 +656,67 @@ public class MainApp {
 		lblInsertChurchDonations.setBounds(381, 11, 336, 44);
 		panelChurchDonations.add(lblInsertChurchDonations);
 		
-		JLabel labelFullName = new JLabel("Full Name");
+		JLabel labelFullName = new JLabel("Full Name *");
 		labelFullName.setFont(new Font("Verdana", Font.PLAIN, 14));
-		labelFullName.setBounds(535, 605, 83, 39);
+		labelFullName.setBounds(529, 544, 92, 39);
 		panelChurchDonations.add(labelFullName);
 		
 		textFieldFull_Name = new JTextField();
 		textFieldFull_Name.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldFull_Name.setColumns(10);
-		textFieldFull_Name.setBounds(639, 606, 420, 39);
+		textFieldFull_Name.setBounds(639, 544, 420, 39);
 		panelChurchDonations.add(textFieldFull_Name);
 		
-		JLabel lblCashDonations = new JLabel("Cash Donations");
+		JLabel lblCashDonations = new JLabel("Cash Donations *");
 		lblCashDonations.setFont(new Font("Verdana", Font.PLAIN, 14));
-		lblCashDonations.setBounds(24, 658, 123, 39);
+		lblCashDonations.setBounds(24, 596, 143, 39);
 		panelChurchDonations.add(lblCashDonations);
 		
 		textFieldCashDonation = new JTextField();
 		textFieldCashDonation.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldCashDonation.setColumns(10);
-		textFieldCashDonation.setBounds(179, 658, 319, 39);
+		textFieldCashDonation.setBounds(179, 596, 319, 39);
 		panelChurchDonations.add(textFieldCashDonation);
 		
-		JLabel lblNoncashDonations = new JLabel("Non-Cash Donations");
+		JLabel lblNoncashDonations = new JLabel("Non-Cash Donations *");
 		lblNoncashDonations.setFont(new Font("Verdana", Font.PLAIN, 14));
-		lblNoncashDonations.setBounds(535, 658, 157, 39);
+		lblNoncashDonations.setBounds(529, 596, 172, 39);
 		panelChurchDonations.add(lblNoncashDonations);
 		
 		textFieldNonCashDonation = new JTextField();
 		textFieldNonCashDonation.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldNonCashDonation.setColumns(10);
-		textFieldNonCashDonation.setBounds(714, 659, 345, 39);
+		textFieldNonCashDonation.setBounds(714, 597, 345, 39);
 		panelChurchDonations.add(textFieldNonCashDonation);
 		
 		JLabel labelDonorPhone = new JLabel("Contact Phone No.");
 		labelDonorPhone.setFont(new Font("Verdana", Font.PLAIN, 14));
-		labelDonorPhone.setBounds(24, 713, 143, 39);
+		labelDonorPhone.setBounds(24, 651, 143, 39);
 		panelChurchDonations.add(labelDonorPhone);
 		
 		textFieldPhoneNo = new JTextField();
 		textFieldPhoneNo.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldPhoneNo.setColumns(10);
-		textFieldPhoneNo.setBounds(179, 713, 319, 39);
+		textFieldPhoneNo.setBounds(179, 651, 319, 39);
 		panelChurchDonations.add(textFieldPhoneNo);
 		
 		JButton buttonSaveDonor = new JButton("Save to Church Donation");
 		buttonSaveDonor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				String cashDonate = textFieldCashDonation.getText();
-				if (cashDonate.equals(""))	{
-					cashDonate = "0.00";										//DEFAULT CASH DONATION VALUE IF THE DATA FIELD IS EMPTY
-				}
-				
-				String D_OfDonate = textFieldDateofDonation.getText();
-				if (D_OfDonate.equals(""))	{
-					D_OfDonate = "1000-01-01";										//DEFAULT DATE VALUE IF THE DATA FIELD IS EMPTY
-				}
-				
-				String nonCash = textFieldNonCashDonation.getText();
-				if (nonCash.equals(""))	{
-					nonCash = "NONE";											//DEFAULT NONE CASH DONATION VALUE IF THE DATA FIELD IS EMPTY
-				}
-				
 				String donateID = textFieldDonationID.getText().toUpperCase();
 				String f_Name = textFieldFull_Name.getText();
-				BigDecimal cashD = new BigDecimal(cashDonate);
-				String nonCashD = nonCash;
+				String cashD = textFieldCashDonation.getText();
+				String nonCashD = textFieldNonCashDonation.getText();
 				String phone = textFieldPhoneNo.getText();
-				String e_mail = textFieldEMail.getText();
-				Date dateOfDonate = java.sql.Date.valueOf(D_OfDonate);
+				String e_mail = textFieldEMail.getText().toLowerCase();
+				String dateOfDonate = textFieldDateofDonation.getText();
 				String memID = textFieldMember_ID.getText().toUpperCase();
 				
 				String DB_User = textFieldUserName.getText();
 				
-				if (donateID.equals("") || memID.equals("") || f_Name.equals(""))	{
-					JOptionPane.showMessageDialog(null, "Donation ID or Member ID or Full Name Field cannot be Empty ! ! !");
+				if (donateID.equals("") || memID.equals("") || f_Name.equals("") || dateOfDonate.equals("") || cashD.equals("") || nonCashD.equals(""))	{
+					JOptionPane.showMessageDialog(null, "All Fields Marked * cannot be Empty ! ! !");
 				}
 				else if (donateID.length() != 7)	{
 					JOptionPane.showMessageDialog(null, "Donation ID format is wrong. The Correct Format - CD-0000");
@@ -759,13 +751,13 @@ public class MainApp {
 					
 					}	catch(Exception ex)	{
 							ex.printStackTrace();
-							JOptionPane.showMessageDialog(null, "Sorry, Donation ID ALREADY Exist, Not Successfully Saved ! ! !");
+							JOptionPane.showMessageDialog(null, "Sorry, Donation ID Already Exist OR \n Member ID Already Exist in the Master List, \n Not Successfully Saved ! ! !");
 						}	
 				}
 			}
 		});
 		buttonSaveDonor.setFont(new Font("Verdana", Font.BOLD, 15));
-		buttonSaveDonor.setBounds(596, 823, 254, 44);
+		buttonSaveDonor.setBounds(590, 761, 254, 44);
 		panelChurchDonations.add(buttonSaveDonor);
 		
 		JButton buttonBackToMenu = new JButton("Back to Menu");								// BACK TO MENU BUTTON ON THE CHURCH DONATION PAGE
@@ -821,13 +813,13 @@ public class MainApp {
 		
 		JLabel lblContactEmail_1 = new JLabel("Contact E-Mail");
 		lblContactEmail_1.setFont(new Font("Verdana", Font.PLAIN, 14));
-		lblContactEmail_1.setBounds(535, 711, 111, 39);
+		lblContactEmail_1.setBounds(535, 649, 111, 39);
 		panelChurchDonations.add(lblContactEmail_1);
 		
 		textFieldEMail = new JTextField();
 		textFieldEMail.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldEMail.setColumns(10);
-		textFieldEMail.setBounds(667, 712, 392, 39);
+		textFieldEMail.setBounds(661, 650, 398, 39);
 		panelChurchDonations.add(textFieldEMail);
 		
 		JButton btnClear_2 = new JButton("Clear All Fields");
@@ -844,61 +836,62 @@ public class MainApp {
 			}
 		});
 		btnClear_2.setFont(new Font("Verdana", Font.BOLD, 15));
-		btnClear_2.setBounds(887, 823, 172, 44);
+		btnClear_2.setBounds(881, 761, 172, 44);
 		panelChurchDonations.add(btnClear_2);
 		
 		JLabel lblDonationForm = new JLabel("Form to Save to Church Donations");
 		lblDonationForm.setFont(new Font("Verdana", Font.BOLD, 16));
-		lblDonationForm.setBounds(417, 560, 337, 32);
+		lblDonationForm.setBounds(417, 498, 337, 32);
 		panelChurchDonations.add(lblDonationForm);
 		
-		JLabel lblMemberIdcmid = new JLabel("Member ID (CMID-0000)");
+		JLabel lblMemberIdcmid = new JLabel("Member ID (CMID-0000) *");
 		lblMemberIdcmid.setFont(new Font("Verdana", Font.PLAIN, 14));
-		lblMemberIdcmid.setBounds(535, 765, 182, 39);
+		lblMemberIdcmid.setBounds(529, 703, 218, 39);
 		panelChurchDonations.add(lblMemberIdcmid);
 		
 		textFieldMember_ID = new JTextField();
 		textFieldMember_ID.setToolTipText("Member ID Format is CMID-0000");
 		textFieldMember_ID.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldMember_ID.setColumns(10);
-		textFieldMember_ID.setBounds(738, 765, 321, 39);
+		textFieldMember_ID.setBounds(759, 703, 300, 39);
 		panelChurchDonations.add(textFieldMember_ID);
 		
-		JLabel lblDateOfDonation = new JLabel("Date of Donation (YYYY-MM-DD)");
+		JLabel lblDateOfDonation = new JLabel("Date of Donation (YYYY-MM-DD) *");
 		lblDateOfDonation.setFont(new Font("Verdana", Font.PLAIN, 14));
-		lblDateOfDonation.setBounds(24, 764, 248, 39);
+		lblDateOfDonation.setBounds(24, 702, 264, 39);
 		panelChurchDonations.add(lblDateOfDonation);
 		
 		textFieldDateofDonation = new JTextField();
+		textFieldDateofDonation.setToolTipText("YYYY-MM-DD");
 		textFieldDateofDonation.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldDateofDonation.setColumns(10);
-		textFieldDateofDonation.setBounds(284, 765, 214, 39);
+		textFieldDateofDonation.setBounds(300, 703, 198, 39);
 		panelChurchDonations.add(textFieldDateofDonation);
 		
-		JLabel labelDonationID = new JLabel("Donation ID (CD-0000)");
+		JLabel labelDonationID = new JLabel("Donation ID (CD-0000) *");
 		labelDonationID.setFont(new Font("Verdana", Font.PLAIN, 14));
-		labelDonationID.setBounds(24, 605, 182, 39);
+		labelDonationID.setBounds(24, 543, 198, 39);
 		panelChurchDonations.add(labelDonationID);
 		
 		textFieldDonationID = new JTextField();
 		textFieldDonationID.setToolTipText("Donation ID Format is CD-0000");
 		textFieldDonationID.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldDonationID.setColumns(10);
-		textFieldDonationID.setBounds(214, 605, 284, 39);
+		textFieldDonationID.setBounds(234, 543, 264, 39);
 		panelChurchDonations.add(textFieldDonationID);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(24, 166, 1035, 377);
+		scrollPane_1.setBounds(24, 166, 1035, 319);
 		panelChurchDonations.add(scrollPane_1);
 		
 		tableViewDonationB4Insert = new JTable();
 		scrollPane_1.setViewportView(tableViewDonationB4Insert);
 		tableViewDonationB4Insert.setFont(new Font("Verdana", Font.PLAIN, 14));
 		
-		JLabel lblViewTheDonation = new JLabel("View the Donation Data in the Database Before Inserting New Data to Make Sure the DONATION ID is Unique");
+		JLabel lblViewTheDonation = new JLabel("To Make Sure the \"DONATION ID\" and \"MEMBER ID\" are Unique, Click either Button Below to View Exisiting Data");
 		lblViewTheDonation.setForeground(Color.RED);
 		lblViewTheDonation.setFont(new Font("Verdana", Font.BOLD, 13));
-		lblViewTheDonation.setBounds(162, 68, 826, 32);
+		lblViewTheDonation.setBounds(151, 68, 867, 32);
 		panelChurchDonations.add(lblViewTheDonation);
 		
 		JButton btnViewB4InsertDonation = new JButton("Click to View Existing Donation Data");				// VIEW CHURCH DONATION BEFORE INSERT
@@ -916,8 +909,27 @@ public class MainApp {
 			}
 		});
 		btnViewB4InsertDonation.setFont(new Font("Verdana", Font.BOLD, 12));
-		btnViewB4InsertDonation.setBounds(354, 113, 392, 32);
+		btnViewB4InsertDonation.setBounds(125, 113, 392, 32);
 		panelChurchDonations.add(btnViewB4InsertDonation);
+		
+		JButton btnClickToViewMasterInDonationB4Insert = new JButton("Click to View Existing Data in Master List");		// VIEW MASTER LIST IN DONATION BEFORE INSERT
+		btnClickToViewMasterInDonationB4Insert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					Connect.viewMasterListInDonationB4Insert();
+					if (tableViewDonationB4Insert.getRowCount() == 0)	{
+						JOptionPane.showMessageDialog(null, "No Information SAVED in Database ! ! !");
+					}
+				} catch (SQLException | IOException e) {
+					
+					e.printStackTrace();
+				}
+			}
+		});
+		btnClickToViewMasterInDonationB4Insert.setFont(new Font("Verdana", Font.BOLD, 12));
+		btnClickToViewMasterInDonationB4Insert.setBounds(590, 113, 392, 32);
+		panelChurchDonations.add(btnClickToViewMasterInDonationB4Insert);
 		
 		panelEditUpdate = new JPanel();																//EDIT AND UPDATE PAGE
 		frmChurchMembersAnd.getContentPane().add(panelEditUpdate, "name_516899568884336");
@@ -931,7 +943,7 @@ public class MainApp {
 		textFieldSearchToUpdate = new JTextField();
 		textFieldSearchToUpdate.setForeground(Color.BLUE);
 		textFieldSearchToUpdate.setFont(new Font("Verdana", Font.PLAIN, 14));
-		textFieldSearchToUpdate.setBounds(26, 685, 578, 33);
+		textFieldSearchToUpdate.setBounds(26, 614, 578, 33);
 		panelEditUpdate.add(textFieldSearchToUpdate);
 		textFieldSearchToUpdate.setColumns(10);
 		
@@ -967,7 +979,7 @@ public class MainApp {
 			}
 		});
 		btnSearchByFull.setFont(new Font("Verdana", Font.BOLD, 13));
-		btnSearchByFull.setBounds(616, 685, 440, 33);
+		btnSearchByFull.setBounds(616, 614, 440, 33);
 		panelEditUpdate.add(btnSearchByFull);
 		
 		JButton buttonBck2Menu = new JButton("Back to Menu");									//BACK TO MENU LIST BUTTON ON THE UPDATE PAGE
@@ -1018,62 +1030,62 @@ public class MainApp {
 		JLabel lblUpdateChurchMembers = new JLabel("Below is the Edit and Update Form for the Church Member Master List");
 		lblUpdateChurchMembers.setForeground(Color.BLUE);
 		lblUpdateChurchMembers.setFont(new Font("Verdana", Font.BOLD, 13));
-		lblUpdateChurchMembers.setBounds(26, 643, 606, 33);
+		lblUpdateChurchMembers.setBounds(26, 572, 606, 33);
 		panelEditUpdate.add(lblUpdateChurchMembers);
 		
 		textField_1EditFullName = new JTextField();
 		textField_1EditFullName.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textField_1EditFullName.setColumns(10);
-		textField_1EditFullName.setBounds(175, 731, 471, 39);
+		textField_1EditFullName.setBounds(140, 660, 506, 39);
 		panelEditUpdate.add(textField_1EditFullName);
 		
-		JLabel lblFullName_1 = new JLabel("Full Name >>");
+		JLabel lblFullName_1 = new JLabel("Full Name *");
 		lblFullName_1.setForeground(Color.BLUE);
 		lblFullName_1.setFont(new Font("Verdana", Font.PLAIN, 13));
-		lblFullName_1.setBounds(26, 731, 116, 39);
+		lblFullName_1.setBounds(26, 660, 116, 39);
 		panelEditUpdate.add(lblFullName_1);
 		
-		JLabel lblDateOfBirth_1 = new JLabel("Date of Birth (YYYY-MM-DD) >>");
+		JLabel lblDateOfBirth_1 = new JLabel("Birth Date (ex: DEC-04) *");
 		lblDateOfBirth_1.setForeground(Color.BLUE);
 		lblDateOfBirth_1.setFont(new Font("Verdana", Font.PLAIN, 13));
-		lblDateOfBirth_1.setBounds(658, 731, 245, 39);
+		lblDateOfBirth_1.setBounds(658, 660, 182, 39);
 		panelEditUpdate.add(lblDateOfBirth_1);
 		
 		textField_2EditDOB = new JTextField();
 		textField_2EditDOB.setFont(new Font("Verdana", Font.PLAIN, 14));
-		textField_2EditDOB.setToolTipText("YYYY-MM-DD");
+		textField_2EditDOB.setToolTipText("ex May-04");
 		textField_2EditDOB.setColumns(10);
-		textField_2EditDOB.setBounds(903, 731, 153, 39);
+		textField_2EditDOB.setBounds(845, 660, 211, 39);
 		panelEditUpdate.add(textField_2EditDOB);
 		
-		JLabel lblContactAddress_1 = new JLabel("Contact Address >>");
+		JLabel lblContactAddress_1 = new JLabel("Contact Address");
 		lblContactAddress_1.setForeground(Color.BLUE);
 		lblContactAddress_1.setFont(new Font("Verdana", Font.PLAIN, 13));
-		lblContactAddress_1.setBounds(26, 783, 147, 39);
+		lblContactAddress_1.setBounds(26, 712, 123, 39);
 		panelEditUpdate.add(lblContactAddress_1);
 		
-		JLabel lblContactPhoneNo_1 = new JLabel("Contact Phone No. >>");
+		JLabel lblContactPhoneNo_1 = new JLabel("Contact Phone No.");
 		lblContactPhoneNo_1.setForeground(Color.BLUE);
 		lblContactPhoneNo_1.setFont(new Font("Verdana", Font.PLAIN, 13));
-		lblContactPhoneNo_1.setBounds(658, 783, 189, 39);
+		lblContactPhoneNo_1.setBounds(658, 712, 132, 39);
 		panelEditUpdate.add(lblContactPhoneNo_1);
 		
 		textField_3EditPhoneNo = new JTextField();
 		textField_3EditPhoneNo.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textField_3EditPhoneNo.setColumns(10);
-		textField_3EditPhoneNo.setBounds(845, 783, 211, 39);
+		textField_3EditPhoneNo.setBounds(802, 712, 254, 39);
 		panelEditUpdate.add(textField_3EditPhoneNo);
 		
-		JLabel lblContactEmail_2 = new JLabel("Contact E-Mail >>");
+		JLabel lblContactEmail_2 = new JLabel("Contact E-Mail");
 		lblContactEmail_2.setForeground(Color.BLUE);
 		lblContactEmail_2.setFont(new Font("Verdana", Font.PLAIN, 13));
-		lblContactEmail_2.setBounds(26, 835, 147, 39);
+		lblContactEmail_2.setBounds(26, 764, 116, 39);
 		panelEditUpdate.add(lblContactEmail_2);
 		
 		textField_4EditEMail = new JTextField();
 		textField_4EditEMail.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textField_4EditEMail.setColumns(10);
-		textField_4EditEMail.setBounds(175, 834, 471, 39);
+		textField_4EditEMail.setBounds(161, 763, 485, 39);
 		panelEditUpdate.add(textField_4EditEMail);
 		
 		JButton btnUpdateChurchMember = new JButton("Update Master List");					// BUTTON TO UPDATE MASTER LIST
@@ -1081,66 +1093,70 @@ public class MainApp {
 		btnUpdateChurchMember.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				String D_OfBirth = textField_2EditDOB.getText();
-				if (D_OfBirth.equals(""))	{
-					D_OfBirth = "1000-01-01";										//DEFAULT DATE VALUE IF THE DATA FIELD IS EMPTY
-				}
-				
 				String FN = textField_1EditFullName.getText();
-				Date DOB = java.sql.Date.valueOf(D_OfBirth);
+				String DOB = textField_2EditDOB.getText().toUpperCase();
 				String CA = textFieldEditContactAdd.getText();
 				String PN = textField_3EditPhoneNo.getText();
 				String E = textField_4EditEMail.getText();
 				String memIDsearch = searchMemberID;
 				
-				try {
-					boolean upDate = Connect.updateChurchMemberContact(FN, DOB, CA, PN, E, memIDsearch);
+				if (FN.equals("") || DOB.equals(""))	{
+					JOptionPane.showMessageDialog(null, "All Fields Marked * cannot be Empty ! ! !");
+				}
+				else if (DOB.length() != 6)	{
+					JOptionPane.showMessageDialog(null, "Wrong Birth Date format. Correct Sample Format: DEC-20");
+				}
+				else	{
+				
+					try {
+						boolean upDate = Connect.updateChurchMemberContact(FN, DOB, CA, PN, E, memIDsearch);
 					
-					if (upDate == true)	{
-						JOptionPane.showMessageDialog(null, "Master Contact List Successfully Updated ! ! !");
-						textField_1EditFullName.setText("");
-						textField_2EditDOB.setText("");
-						textFieldEditContactAdd.setText("");
-						textField_3EditPhoneNo.setText("");
-						textField_4EditEMail.setText("");
-						memIDsearch = null;
-						searchMemberID = null;
+						if (upDate == true)	{
+							JOptionPane.showMessageDialog(null, "Master Contact List Successfully Updated ! ! !");
+							textField_1EditFullName.setText("");
+							textField_2EditDOB.setText("");
+							textFieldEditContactAdd.setText("");
+							textField_3EditPhoneNo.setText("");
+							textField_4EditEMail.setText("");
+							memIDsearch = null;
+							searchMemberID = null;
 						
-						try	{
-							Connect.selectFromMasterList();										//TO REFRESH THE VIEW TABLE AFTER UPDATE IS DONE
-							if (Connect.checkMasterList() == true)	{
-								JOptionPane.showMessageDialog(null, "Result Table has been Refreshed, Look through to confirm ! ! !");
-							}
-						} 	catch (SQLException | IOException ey) {
-							ey.printStackTrace();
-							}
+							try	{
+								Connect.selectFromMasterList();										//TO REFRESH THE VIEW TABLE AFTER UPDATE IS DONE
+								if (Connect.checkMasterList() == true)	{
+									JOptionPane.showMessageDialog(null, "Result Table has been Refreshed, Look through to confirm ! ! !");
+								}
+							} 	catch (SQLException | IOException ey) {
+									ey.printStackTrace();
+								}
 						
-					}
-					else	{
+						}
+						else	{
+							JOptionPane.showMessageDialog(null, "Master Contact List NOT Successfully Updated ! ! !");
+							textField_1EditFullName.setText("");
+							textField_2EditDOB.setText("");
+							textFieldEditContactAdd.setText("");
+							textField_3EditPhoneNo.setText("");
+							textField_4EditEMail.setText("");
+							searchMemberID = null;
+							memIDsearch = null;
+						}
+					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(null, "Master Contact List NOT Successfully Updated ! ! !");
 						textField_1EditFullName.setText("");
 						textField_2EditDOB.setText("");
 						textFieldEditContactAdd.setText("");
 						textField_3EditPhoneNo.setText("");
 						textField_4EditEMail.setText("");
-						searchMemberID = null;
 						memIDsearch = null;
+						searchMemberID = null;
+						e1.printStackTrace();
 					}
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(null, "Master Contact List NOT Successfully Updated ! ! !");
-					textField_1EditFullName.setText("");
-					textField_2EditDOB.setText("");
-					textFieldEditContactAdd.setText("");
-					textField_3EditPhoneNo.setText("");
-					textField_4EditEMail.setText("");
-					memIDsearch = null;
-					searchMemberID = null;
-					e1.printStackTrace();
 				}
 			}
 		});
 		btnUpdateChurchMember.setFont(new Font("Verdana", Font.BOLD, 14));
-		btnUpdateChurchMember.setBounds(658, 836, 225, 36);
+		btnUpdateChurchMember.setBounds(658, 765, 225, 36);
 		panelEditUpdate.add(btnUpdateChurchMember);
 		
 		JButton btnClear_3 = new JButton("Clear Fields");
@@ -1154,21 +1170,21 @@ public class MainApp {
 			}
 		});
 		btnClear_3.setFont(new Font("Verdana", Font.BOLD, 14));
-		btnClear_3.setBounds(895, 835, 161, 36);
+		btnClear_3.setBounds(895, 764, 161, 36);
 		panelEditUpdate.add(btnClear_3);
 		
 		textFieldEditContactAdd = new JTextField();
-		textFieldEditContactAdd.setToolTipText("YYYY-MM-DD");
+		textFieldEditContactAdd.setToolTipText("");
 		textFieldEditContactAdd.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldEditContactAdd.setColumns(10);
-		textFieldEditContactAdd.setBounds(175, 783, 471, 39);
+		textFieldEditContactAdd.setBounds(161, 712, 485, 39);
 		panelEditUpdate.add(textFieldEditContactAdd);
 		
 		tableMasterList = new JTable();
 		tableMasterList.setFont(new Font("Verdana", Font.PLAIN, 14));
 		
 		JScrollPane scrollPane = new JScrollPane(tableMasterList);
-		scrollPane.setBounds(43, 154, 999, 402);
+		scrollPane.setBounds(43, 144, 999, 335);
 		panelEditUpdate.add(scrollPane);
 		
 		JButton btnClickToView = new JButton("Click to View ALL Church Members");
@@ -1186,7 +1202,7 @@ public class MainApp {
 		});
 		btnClickToView.setForeground(new Color(255, 0, 51));
 		btnClickToView.setFont(new Font("Verdana", Font.BOLD, 12));
-		btnClickToView.setBounds(43, 108, 307, 33);
+		btnClickToView.setBounds(43, 98, 307, 33);
 		panelEditUpdate.add(btnClickToView);
 		
 		JButton btnViewDonors = new JButton("Click to View Church Donors ONLY");
@@ -1205,7 +1221,7 @@ public class MainApp {
 		});
 		btnViewDonors.setForeground(Color.BLACK);
 		btnViewDonors.setFont(new Font("Verdana", Font.BOLD, 12));
-		btnViewDonors.setBounds(393, 108, 307, 33);
+		btnViewDonors.setBounds(393, 98, 307, 33);
 		panelEditUpdate.add(btnViewDonors);
 		
 		JButton btnExportMasterList = new JButton("Export ALL Church Member List to File");
@@ -1221,7 +1237,7 @@ public class MainApp {
 		});
 		btnExportMasterList.setForeground(new Color(0, 0, 139));
 		btnExportMasterList.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 12));
-		btnExportMasterList.setBounds(43, 597, 319, 33);
+		btnExportMasterList.setBounds(43, 526, 319, 33);
 		panelEditUpdate.add(btnExportMasterList);
 		
 		JButton btnExportChurchDonor = new JButton("Export ALL Church Donoation List to File");
@@ -1237,13 +1253,13 @@ public class MainApp {
 		});
 		btnExportChurchDonor.setForeground(new Color(0, 0, 139));
 		btnExportChurchDonor.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 12));
-		btnExportChurchDonor.setBounds(381, 597, 319, 33);
+		btnExportChurchDonor.setBounds(381, 526, 319, 33);
 		panelEditUpdate.add(btnExportChurchDonor);
 		
 		JLabel lblToExportChurch = new JLabel("To Export Church Members Main List or Church Donations List to File, Click either of the Button Below");
 		lblToExportChurch.setForeground(new Color(0, 0, 139));
 		lblToExportChurch.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 12));
-		lblToExportChurch.setBounds(41, 563, 757, 33);
+		lblToExportChurch.setBounds(41, 492, 757, 33);
 		panelEditUpdate.add(lblToExportChurch);
 		
 		JButton btnDeleteAllExisting = new JButton("Delete All Existing Files Before Export");
@@ -1255,7 +1271,7 @@ public class MainApp {
 		});
 		btnDeleteAllExisting.setForeground(Color.RED);
 		btnDeleteAllExisting.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 12));
-		btnDeleteAllExisting.setBounds(723, 597, 319, 33);
+		btnDeleteAllExisting.setBounds(723, 526, 319, 33);
 		panelEditUpdate.add(btnDeleteAllExisting);
 		
 		JButton btnClickToView_1 = new JButton("Click to View Church Donations");
@@ -1274,7 +1290,7 @@ public class MainApp {
 		});
 		btnClickToView_1.setForeground(Color.BLACK);
 		btnClickToView_1.setFont(new Font("Verdana", Font.BOLD, 12));
-		btnClickToView_1.setBounds(734, 108, 308, 33);
+		btnClickToView_1.setBounds(734, 98, 308, 33);
 		panelEditUpdate.add(btnClickToView_1);
 		
 		JLabel lblClickTheFirst = new JLabel("Click the First Button Below to View ALL Church Member Contacts Before Updating Any Contact");
@@ -1330,7 +1346,7 @@ public class MainApp {
 		textFieldToDelete.setForeground(Color.RED);
 		textFieldToDelete.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldToDelete.setColumns(10);
-		textFieldToDelete.setBounds(68, 680, 526, 33);
+		textFieldToDelete.setBounds(67, 596, 526, 33);
 		panelDelete.add(textFieldToDelete);
 		
 		JButton btnDelete = new JButton("<<    Delete From Master List");
@@ -1377,32 +1393,32 @@ public class MainApp {
 			}
 		});
 		btnDelete.setFont(new Font("Verdana", Font.BOLD, 14));
-		btnDelete.setBounds(623, 679, 407, 33);
+		btnDelete.setBounds(622, 595, 407, 33);
 		panelDelete.add(btnDelete);
 		
 		JLabel lblSearchByFull = new JLabel("Search by \"MEMBER ID\" to Delete from Church Member Contacts List");
 		lblSearchByFull.setForeground(Color.RED);
 		lblSearchByFull.setFont(new Font("Verdana", Font.BOLD, 14));
-		lblSearchByFull.setBounds(68, 646, 594, 32);
+		lblSearchByFull.setBounds(67, 562, 594, 32);
 		panelDelete.add(lblSearchByFull);
 		
 		JLabel lblWarningDeleteingAny_1 = new JLabel("Warning: deleteing any contact information from the Master List will also delete from the Church Donation List, if it exists");
 		lblWarningDeleteingAny_1.setForeground(Color.RED);
 		lblWarningDeleteingAny_1.setFont(new Font("Verdana", Font.BOLD, 12));
-		lblWarningDeleteingAny_1.setBounds(68, 717, 962, 25);
+		lblWarningDeleteingAny_1.setBounds(67, 633, 962, 25);
 		panelDelete.add(lblWarningDeleteingAny_1);
 		
 		JLabel lblSearchByFull_1 = new JLabel("Search by \"DONATION ID\" to Delete from Church Donations List");
 		lblSearchByFull_1.setForeground(Color.BLUE);
 		lblSearchByFull_1.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 14));
-		lblSearchByFull_1.setBounds(68, 789, 673, 25);
+		lblSearchByFull_1.setBounds(67, 705, 673, 25);
 		panelDelete.add(lblSearchByFull_1);
 		
 		textFieldDelDonor = new JTextField();
 		textFieldDelDonor.setForeground(Color.BLUE);
 		textFieldDelDonor.setFont(new Font("Verdana", Font.PLAIN, 14));
 		textFieldDelDonor.setColumns(10);
-		textFieldDelDonor.setBounds(68, 827, 526, 33);
+		textFieldDelDonor.setBounds(67, 743, 526, 33);
 		panelDelete.add(textFieldDelDonor);
 		
 		JButton buttonDelDonor = new JButton("<<    Delete From Church Donation List");
@@ -1450,7 +1466,7 @@ public class MainApp {
 			}
 		});
 		buttonDelDonor.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 14));
-		buttonDelDonor.setBounds(623, 827, 407, 33);
+		buttonDelDonor.setBounds(622, 743, 407, 33);
 		panelDelete.add(buttonDelDonor);
 		
 		JLabel lblDeleteInformationFrom = new JLabel("DELETE INFORMATION FROM THE DATABASE");
@@ -1462,7 +1478,7 @@ public class MainApp {
 		tableViewToDelete.setFont(new Font("Verdana", Font.PLAIN, 14));
 		
 		JScrollPane scrollPane_1ToDel = new JScrollPane(tableViewToDelete);
-		scrollPane_1ToDel.setBounds(24, 191, 1033, 442);
+		scrollPane_1ToDel.setBounds(24, 191, 1033, 346);
 		panelDelete.add(scrollPane_1ToDel);
 		
 		JButton button = new JButton("Click to View All Church Members");
@@ -1504,7 +1520,7 @@ public class MainApp {
 		JLabel lblToDeleteFrom = new JLabel("To Delete from Church Donation List without Deleting from the Master List use the Search Field and Delete Button below");
 		lblToDeleteFrom.setForeground(Color.BLUE);
 		lblToDeleteFrom.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 12));
-		lblToDeleteFrom.setBounds(68, 763, 883, 25);
+		lblToDeleteFrom.setBounds(67, 679, 883, 25);
 		panelDelete.add(lblToDeleteFrom);
 		
 		JLabel lblWarningBeforeDeleting = new JLabel("Warning: before deleting any data from the database, kindly click on the either buttons below to view the data to be sure of what to delete");
