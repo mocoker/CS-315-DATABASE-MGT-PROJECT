@@ -2,7 +2,6 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +16,7 @@ public class Connect	{
 	//private static String url = "jdbc:mysql://localhost:3306/mocoker_final_project_db";
 
 	private static final String url = "jdbc:mysql://localhost:3306/mocoker_final_project_db?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=US/Central";
-
+	
 	private static String user = "student";
 	private static String password = "student";
 	private static Connection myConn = null;
@@ -82,30 +81,29 @@ public class Connect	{
 	}
 	
 	//THIS METHOD IS TO VIEW CHURCH MEMBER CONTACT BEFORE INSERT ##################################333
-			public static void viewMemberContactB4Insert() throws SQLException, IOException	{
+	public static void viewMemberContactB4Insert() throws SQLException, IOException	{
 				
-				String sqlSelect = "SELECT Member_ID, Full_Name, Date_of_Birth, Contact_Address, Phone_Number, E_Mail, Notes FROM Church_Member_Contacts";
+		String sqlSelect = "SELECT Member_ID, Full_Name, Date_of_Birth, Contact_Address, Phone_Number, E_Mail, Notes FROM Church_Member_Contacts";
 				
-				Statement selectSQL = myConn.createStatement();		
-				ResultSet result = selectSQL.executeQuery(sqlSelect);
+		Statement selectSQL = myConn.createStatement();		
+		ResultSet result = selectSQL.executeQuery(sqlSelect);
 				
-				MainApp.tableViewMemberContactB4Insert.setModel(DbUtils.resultSetToTableModel(result));
-			}
+		MainApp.tableViewMemberContactB4Insert.setModel(DbUtils.resultSetToTableModel(result));
+	}
 	
 	// THIS METHOD IS TO INSERT INTO CHURCH MEMBER CONTACT INFORMATION
-	public static boolean insertChurchMemberInfo(String M_ID, String f_N, Date DOB, String CA, String P, String E, String notes, String DB_U) throws SQLException	{
+	public static boolean insertChurchMemberInfo(String M_ID, String f_N, String DOB, String CA, String P, String E, String DB_U) throws SQLException	{
 		
-		String sqlIns = "INSERT INTO Church_Member_Contacts (Member_ID, Full_Name, Date_of_Birth, Contact_Address, Phone_Number, E_Mail, Notes, Admin_Users) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		String sqlIns = "INSERT INTO Church_Member_Contacts (Member_ID, Full_Name, Date_of_Birth, Contact_Address, Phone_Number, E_Mail, Admin_Users) VALUES (?, ?, ?, ?, ?, ?, ?)";
 		
 		PreparedStatement sqlQ = myConn.prepareStatement(sqlIns);
 		sqlQ.setString(1, M_ID);
 		sqlQ.setString(2, f_N);
-		sqlQ.setDate(3, DOB);
+		sqlQ.setString(3, DOB);
 		sqlQ.setString(4, CA);
 		sqlQ.setString(5, P);
 		sqlQ.setString(6, E);
-		sqlQ.setString(7, notes);
-		sqlQ.setString(8, DB_U);
+		sqlQ.setString(7, DB_U);
 		
 		int rowsInserted = sqlQ.executeUpdate();
 		if (rowsInserted > 0) {
@@ -114,30 +112,41 @@ public class Connect	{
 		return false;
 	}
 	
-	//THIS METHOD IS TO VIEW CHURCH DONATIONS BEFORE INSERT ##################################333
-		public static void viewDonationB4Insert() throws SQLException, IOException	{
+	//THIS METHOD IS TO VIEW CHURCH DONATIONS BEFORE INSERT ##################################
+	public static void viewMasterListInDonationB4Insert() throws SQLException, IOException	{
 			
-			String sqlSelect = "SELECT Donation_ID, Full_Name, Phone_Number, E_Mail, Date_of_Donation, Member_ID FROM Church_Donations";
+		String sqlSelect = "SELECT Member_ID, Full_Name, Date_of_Birth, Contact_Address, Phone_Number, E_Mail, Notes FROM Church_Member_Contacts";
 			
-			Statement selectSQL = myConn.createStatement();		
-			ResultSet result = selectSQL.executeQuery(sqlSelect);
+		Statement selectSQL = myConn.createStatement();		
+		ResultSet result = selectSQL.executeQuery(sqlSelect);
 			
-			MainApp.tableViewDonationB4Insert.setModel(DbUtils.resultSetToTableModel(result));
-		}
+		MainApp.tableViewDonationB4Insert.setModel(DbUtils.resultSetToTableModel(result));
+	}
+	
+	//THIS METHOD IS TO VIEW CHURCH DONATIONS BEFORE INSERT ##################################
+	public static void viewDonationB4Insert() throws SQLException, IOException	{
+			
+		String sqlSelect = "SELECT Donation_ID, Full_Name, Phone_Number, E_Mail, Date_of_Donation, Member_ID FROM Church_Donations";
+			
+		Statement selectSQL = myConn.createStatement();		
+		ResultSet result = selectSQL.executeQuery(sqlSelect);
+			
+		MainApp.tableViewDonationB4Insert.setModel(DbUtils.resultSetToTableModel(result));
+	}
 	
 	// THIS METHOD IS TO INSERT INTO CHURCH DONATION
-	public static boolean insertChurchDonationInfo(String D_ID, String f_N, BigDecimal cashD, String N_cashD, String P, String E, Date dateOfD, String M_ID, String DB_User) throws SQLException	{
+	public static boolean insertChurchDonationInfo(String D_ID, String f_N, String cashD, String N_cashD, String P, String E, String dateOfD, String M_ID, String DB_User) throws SQLException	{
 		
 		String sqlIns = "INSERT INTO Church_Donations (Donation_ID, Full_Name, Cash_Donations, Non_Cash_Donation, Phone_Number, E_Mail, Date_of_Donation, Member_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		
 		PreparedStatement sqlQ = myConn.prepareStatement(sqlIns);
 		sqlQ.setString(1, D_ID);
 		sqlQ.setString(2, f_N);
-		sqlQ.setBigDecimal(3, cashD);
+		sqlQ.setBigDecimal(3, new BigDecimal(cashD));
 		sqlQ.setString(4, N_cashD);
 		sqlQ.setString(5, P);
 		sqlQ.setString(6, E);
-		sqlQ.setDate(7, dateOfD);
+		sqlQ.setDate(7, java.sql.Date.valueOf(dateOfD));
 		sqlQ.setString(8, M_ID);
 			
 		int rowsInserted = sqlQ.executeUpdate();
@@ -242,14 +251,14 @@ public class Connect	{
 	}
 	
 	//THIS METHOD IS TO UPDATE THE DATA IN THE CHURCH MEMBER CONTACT LIST
-	public static boolean updateChurchMemberContact(String f_N, Date DOB, String CA, String P, String E, String searchMemberID) throws SQLException	{
+	public static boolean updateChurchMemberContact(String f_N, String DOB, String CA, String P, String E, String searchMemberID) throws SQLException	{
 		
 		String sqlUpD = "UPDATE Church_Member_Contacts SET Full_Name = ?, Date_of_Birth = ?, Contact_Address = ?, Phone_Number = ?, E_Mail = ? WHERE Member_ID = ?";
 		
 		PreparedStatement sqlUp = myConn.prepareStatement(sqlUpD);
 		
 		sqlUp.setString(1, f_N);
-		sqlUp.setDate(2, DOB);
+		sqlUp.setString(2, DOB);
 		sqlUp.setString(3, CA);
 		sqlUp.setString(4, P);
 		sqlUp.setString(5, E);
@@ -337,7 +346,7 @@ public class Connect	{
 		    String eMail = result.getString(6);
 		    String notes = result.getString(7);
 			    	    
-		    String toWrite = memID + " " + fullName + " " + DOB + " " + contactAddress + " " + phoneNo + " " + eMail + " " + notes; // THE CONCATENATED RESULT FOR OUTPUT
+		    String toWrite = memID + " : " + fullName + " : " + DOB + " : " + contactAddress + " : " + phoneNo + " : " + eMail + " : " + notes; // THE CONCATENATED RESULT FOR OUTPUT
 			    
 		    WriteToFile.writeChurchMemberToFile(toWrite, outPutFile);
 		}
@@ -378,7 +387,7 @@ public class Connect	{
 			String dateOFD = result.getString(7);
 			String memID = result.getString(8);
 				
-			String toWrite = D_ID + " " + fullName + " " + cashD + " " + nonCashD + " " + phoneNo + "  " + eMail + " " + dateOFD + " " + memID;		// THE CONCATENATED RESULT FOR OUTPUT
+			String toWrite = D_ID + " : " + fullName + " : " + cashD + " : " + nonCashD + " : " + phoneNo + " : " + eMail + " : " + dateOFD + " : " + memID;		// THE CONCATENATED RESULT FOR OUTPUT
 				
 			WriteToFile.writeChurchDonationToFile(toWrite, outPutFile);
 		}
@@ -391,7 +400,7 @@ public class Connect	{
 			
 		if (checkFile.exists())	{
 			if (checkFile.length() > 0)	{
-				JOptionPane.showMessageDialog(null, "Success ! ! ! Exported to the Working Folder as Church_Donation.csv");
+				JOptionPane.showMessageDialog(null, "Successfully Exported to the Working Folder as Church_Donation.csv");
 			}
 		}
 		else	{
@@ -418,7 +427,7 @@ public class Connect	{
 		    String phoneNo = result.getString(3);
 		    String eMail = result.getString(4);
 		     	    
-		    String toWrite = fullName + " " + DOBirth + " " + phoneNo + " " + eMail; 		// THE CONCATENATED RESULT FOR OUTPUT
+		    String toWrite = fullName + " : " + DOBirth + " : " + phoneNo + " : " + eMail; 		// THE CONCATENATED RESULT FOR OUTPUT
 			    
 		    WriteToFile.writeDateOfBirthToFile(toWrite, outPutFile);
 		}
