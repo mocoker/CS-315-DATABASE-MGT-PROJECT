@@ -18,11 +18,11 @@ Currently the application works on MS-Windows, Linux, and UNIX Systems
 
 # THE FRAME WORK
 
-The applicatwion is built with Java
+The application was built with Java
 
-The IDE used is Eclipse
+The IDE used was Eclipse
 
-The database is MySQL
+The database was MySQL
 
 # TO CONTRIBUTE
 
