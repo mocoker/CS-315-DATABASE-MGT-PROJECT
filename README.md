@@ -4,7 +4,7 @@ Database Management Final Project
 # ABOUT THE PROJECT
 I created a JavaFX GUI application to work with MySQL Database.
 
-It is an application that is built to be used by Churches to keep Contact record of All Church Members
+It is an application built to be used by Churches to keep Contact record of All Church Members
 
 Also to keep record of all donations made to the church by Church members and Non-Members
 
